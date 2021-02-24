@@ -1,6 +1,23 @@
 import React, {useState} from 'react'
 import ReactDOM from 'react-dom'
 
+interface HighestVotedAnectodeProps {
+  anectode: string,
+  votes: number
+} 
+
+const HighestVotedAnectode = ({anectode, votes}: HighestVotedAnectodeProps) => {
+  if(votes == 0) return <p>No favorite Anectode</p>
+
+  return (
+    <div>
+      <h1>Anectode With The Most Votes</h1>
+      <p>{anectode}</p>
+      <p>has {votes} votes</p>
+    </div>
+  )
+}
+
 const anecdotes = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -16,7 +33,10 @@ interface AppProps {
 
 const App = ({anectodes}: AppProps) => {
   const [selected, setSelected] = useState(0)
-  const [points, setPoints] = useState(anecdotes.map(a => 0))
+  const [points, setPoints] = useState({
+    points: anecdotes.map(a => 0),
+    mostVotedPoint: 0
+  })
 
   const onChangeAnectode = () => {
     const newIndex = Math.floor(Math.random() * Math.floor(anecdotes.length))
@@ -24,19 +44,28 @@ const App = ({anectodes}: AppProps) => {
   }
 
   const onVote = () => {
-    const newPoints = [...points]
+    const newPoints = [...points.points]
     ++newPoints[selected]
-    setPoints(newPoints)
+    const max = Math.max(...newPoints)
+    const mostVoted = newPoints.indexOf(max)
+    setPoints({
+      points: newPoints,
+      mostVotedPoint: mostVoted
+    })
   }
 
   return (
     <div>
       {anecdotes[selected]}
       <br />
-      <p>has {points[selected]} votes</p>
+      <p>has {points.points[selected]} votes</p>
       <br />
       <button onClick={onVote}>vote</button>
       <button onClick={onChangeAnectode}>Next Anectode</button>
+      <HighestVotedAnectode 
+        anectode={anecdotes[points.mostVotedPoint]}
+        votes={points.points[points.mostVotedPoint]}
+      />
     </div>
   )
 }
