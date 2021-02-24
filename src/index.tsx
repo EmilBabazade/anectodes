@@ -16,16 +16,27 @@ interface AppProps {
 
 const App = ({anectodes}: AppProps) => {
   const [selected, setSelected] = useState(0)
+  const [points, setPoints] = useState(anecdotes.map(a => 0))
 
   const onChangeAnectode = () => {
     const newIndex = Math.floor(Math.random() * Math.floor(anecdotes.length))
     setSelected(newIndex)
   }
 
+  const onVote = () => {
+    const newPoints = [...points]
+    ++newPoints[selected]
+    setPoints(newPoints)
+  }
+
   return (
     <div>
       {anecdotes[selected]}
-      <button onClick={onChangeAnectode}>Change Anectode</button>
+      <br />
+      <p>has {points[selected]} votes</p>
+      <br />
+      <button onClick={onVote}>vote</button>
+      <button onClick={onChangeAnectode}>Next Anectode</button>
     </div>
   )
 }
